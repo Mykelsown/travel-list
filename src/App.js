@@ -1,18 +1,18 @@
-import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 import { useState } from "react";
 
-const initialItems = [
-  { id: 1, description: "Passports", quantity: 2, packed: false },
-  { id: 2, description: "Socks", quantity: 12, packed: false },
-  { id: 3, description: "tootbrush", quantity: 1, packed: true },
-];
+// const initialItems = [
+//   { id: 1, description: "Passports", quantity: 2, packed: false },
+//   { id: 2, description: "Socks", quantity: 12, packed: false },
+//   { id: 3, description: "tootbrush", quantity: 1, packed: true },
+// ];
 
 function App() {
+  const [itemsStats, setItemsStats] = useState([]);
   return (
     <div className="app">
       <Header />
-      <Form />
-      <PackingLists />
+      <Form itemsStats={itemsStats} setItemsStats={setItemsStats} />
+      <PackingLists itemsStats={itemsStats} setItemsStats={setItemsStats} />
       <Stats />
     </div>
   );
@@ -22,18 +22,24 @@ function Header() {
   return <h1>🌴Far Away👜</h1>;
 }
 
-function Form() {
-  const [iteminput, setItemInput] = useState("");
+function Form({ itemsStats, setItemsStats }) {
+  const [itemDescription, setItemDescription] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
+
+  const item = { itemDescription, itemQuantity, id: Date.now() };
 
   function addItemsToList(e) {
     e.preventDefault();
+
+    setItemsStats(() => [...itemsStats, item]);
+    setItemDescription("");
+    setItemQuantity(1);
   }
 
   return (
-    <form className="add-form" onSubmit={addItemsToList}>
+    <form className="add-form" onSubmit={addItemsToList}> 
       <h3>What do you need for your 😍 trip?</h3>
-      <select onChange={(e) => setItemQuantity(Number(e.target.value))}>
+      <select value={itemQuantity} onChange={(e) => setItemQuantity(Number(e.target.value))}>
         {Array.from({ length: 20 }, (_, i) => (
           <option value={i + 1} key={i}>
             {i + 1}
@@ -43,20 +49,25 @@ function Form() {
       <input
         type="text"
         placeholder="item..."
-        value={iteminput}
-        onChange={(e) => setItemInput(e.target.value)}
+        value={itemDescription}
+        onChange={(e) => setItemDescription(e.target.value)}
       />
       <button>Add</button>
     </form>
   );
 }
 
-function PackingLists() {
+function PackingLists({ itemsStats, setItemsStats }) {
   return (
     <div className="list">
       <ul>
-        {initialItems.map((item) => (
-          <List itemObj={item} key={item.id} />
+        {itemsStats.map((item) => (
+          <List
+            itemObj={item}
+            itemsArr={itemsStats}
+            setItemsArr={setItemsStats}
+            key={item.id}
+          />
         ))}
       </ul>
       <Filter />
@@ -64,13 +75,32 @@ function PackingLists() {
   );
 }
 
-function List({ itemObj }) {
+function List({ itemObj, itemsArr, setItemsArr }) {
+  const [checked, setChecked] = useState(false);
+  function handleCheck(e) {
+    setChecked(() => e.target.checked);
+  }
+
+  function removeItem() {
+    const itemsToDeleteIndex = itemsArr.findIndex(
+      (item) => item.id === itemObj.id
+    );
+    setItemsArr(itemsArr.toSpliced(itemsToDeleteIndex, 1));
+  }
+
   return (
     <li>
-      <span style={itemObj.packed ? { textDecoration: "line-through" } : {}}>
-        {itemObj.quantity} {itemObj.description}
+      <input
+        type="checkbox"
+        defaultChecked={checked}
+        onClick={(e) => {
+          handleCheck(e);
+        }}
+      />
+      <span style={checked ? { textDecoration: "line-through" } : {}}>
+        {itemObj.itemQuantity} {itemObj.itemDescription}
       </span>
-      <button>❌</button>
+      <button onClick={removeItem}>❌</button>
     </li>
   );
 }
