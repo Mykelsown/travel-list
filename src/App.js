@@ -7,12 +7,12 @@ import { useState } from "react";
 // ];
 
 function App() {
-  const [itemsStats, setItemsStats] = useState([]);
+  const [itemsArr, setItemsArr] = useState([]);
   return (
     <div className="app">
       <Header />
-      <Form itemsStats={itemsStats} setItemsStats={setItemsStats} />
-      <PackingLists itemsStats={itemsStats} setItemsStats={setItemsStats} />
+      <Form itemsArr={itemsArr} setItemsArr={setItemsArr} />
+      <PackingLists itemsArr={itemsArr} setItemsArr={setItemsArr} />
       <Stats />
     </div>
   );
@@ -22,24 +22,27 @@ function Header() {
   return <h1>🌴Far Away👜</h1>;
 }
 
-function Form({ itemsStats, setItemsStats }) {
+function Form({ itemsArr, setItemsArr }) {
   const [itemDescription, setItemDescription] = useState("");
   const [itemQuantity, setItemQuantity] = useState(1);
 
-  const item = { itemDescription, itemQuantity, id: Date.now() };
+  const item = { itemDescription, itemQuantity, id: Date.now(), packed: false };
 
   function addItemsToList(e) {
     e.preventDefault();
 
-    setItemsStats(() => [...itemsStats, item]);
+    setItemsArr(() => [...itemsArr, item]);
     setItemDescription("");
     setItemQuantity(1);
   }
 
   return (
-    <form className="add-form" onSubmit={addItemsToList}> 
+    <form className="add-form" onSubmit={addItemsToList}>
       <h3>What do you need for your 😍 trip?</h3>
-      <select value={itemQuantity} onChange={(e) => setItemQuantity(Number(e.target.value))}>
+      <select
+        value={itemQuantity}
+        onChange={(e) => setItemQuantity(Number(e.target.value))}
+      >
         {Array.from({ length: 20 }, (_, i) => (
           <option value={i + 1} key={i}>
             {i + 1}
@@ -57,20 +60,60 @@ function Form({ itemsStats, setItemsStats }) {
   );
 }
 
-function PackingLists({ itemsStats, setItemsStats }) {
+function PackingLists({ itemsArr, setItemsArr }) {
+  const [sort, setSort] = useState("sbio");
+  let sortedItems;
+
+  function clearList(e) {
+    e.preventDefault();
+    setItemsArr([]);
+  }
+
+  function sortItems() {
+    if (sort === "sbio") {
+      sortItems = itemsArr;
+    }
+
+    if (sort === "sbci") {
+      sortItems = itemsArr.sort((a, b) => a.packed.localeCompare(b.packed));
+    }
+
+    if (sort === "sbn") {
+      sortItems = itemsArr.sort((a, b) =>
+        a.itemDescription.localeCompare(b.itemDescription)
+      );
+    }
+  }
+  sortItems();
+
   return (
     <div className="list">
       <ul>
-        {itemsStats.map((item) => (
+        {sortItems.map((item) => (
           <List
             itemObj={item}
-            itemsArr={itemsStats}
-            setItemsArr={setItemsStats}
+            itemsArr={itemsArr}
+            setItemsArr={setItemsArr}
             key={item.id}
           />
         ))}
       </ul>
-      <Filter />
+
+      <form className="actions" onSubmit={clearList}>
+        <select
+          id="orderBy"
+          value={sort}
+          onChange={(e) => {
+            setSort(e.target.value);
+          }}
+        >
+          <option disabled>Sort by:</option>
+          <option value="sbio">input order</option>
+          <option value="sbci">checked items</option>
+          <option value="sbn">items name</option>
+        </select>
+        <button>Clear List</button>
+      </form>
     </div>
   );
 }
@@ -105,22 +148,12 @@ function List({ itemObj, itemsArr, setItemsArr }) {
   );
 }
 
-function Filter() {
-  function clearList(e) {
-    e.preventDefault();
-  }
+// function Filter({ itemsArr }) {
 
-  return (
-    <form className="actions" onSubmit={clearList}>
-      <select id="orderBy">
-        <option value={"sort by input value"}>Sort by input order</option>
-        <option value={"sort by input value"}>Sort by checked items</option>
-        <option value={"sort by input value"}>Sort by name</option>
-      </select>
-      <button>Clear List</button>
-    </form>
-  );
-}
+//   return (
+
+//   );
+// }
 
 function Stats() {
   return (
