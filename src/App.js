@@ -38,7 +38,7 @@ function Form({ itemsArr, setItemsArr }) {
 
   return (
     <form className="add-form" onSubmit={addItemsToList}>
-      <h3>What do you need for your 😍 trip?</h3>
+      <h3>What do you need for your trip? Pack with us 😜</h3>
       <select
         value={itemQuantity}
         onChange={(e) => setItemQuantity(Number(e.target.value))}
@@ -146,7 +146,9 @@ function List({ itemObj, itemsArr, setItemsArr }) {
         }}
       />
       <span style={itemObj.packed ? { textDecoration: "line-through" } : {}}>
-        {itemObj.itemQuantity} {itemObj.itemDescription}
+        {itemObj.itemDescription === ""
+          ? alert("please enter an item to add")
+          : `${itemObj.itemQuantity} ${itemObj.itemDescription}`}
       </span>
       <button onClick={removeItem}>❌</button>
     </li>
