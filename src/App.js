@@ -71,17 +71,17 @@ function PackingLists({ itemsArr, setItemsArr }) {
 
   function sortItems() {
     if (sort === "sbio") {
-      sortItems = itemsArr;
+      sortedItems = itemsArr.slice();
     }
 
     if (sort === "sbci") {
-      sortItems = itemsArr.sort((a, b) => a.packed.localeCompare(b.packed));
+      sortedItems = itemsArr.slice().sort((a, b) => b.packed - a.packed);
     }
 
     if (sort === "sbn") {
-      sortItems = itemsArr.sort((a, b) =>
-        a.itemDescription.localeCompare(b.itemDescription)
-      );
+      sortedItems = itemsArr
+        .slice()
+        .sort((a, b) => a.itemDescription.localeCompare(b.itemDescription));
     }
   }
   sortItems();
@@ -89,7 +89,7 @@ function PackingLists({ itemsArr, setItemsArr }) {
   return (
     <div className="list">
       <ul>
-        {sortItems.map((item) => (
+        {sortedItems.map((item) => (
           <List
             itemObj={item}
             itemsArr={itemsArr}
@@ -119,9 +119,14 @@ function PackingLists({ itemsArr, setItemsArr }) {
 }
 
 function List({ itemObj, itemsArr, setItemsArr }) {
-  const [checked, setChecked] = useState(false);
-  function handleCheck(e) {
-    setChecked(() => e.target.checked);
+  function handleCheck(e, id) {
+    const updatedItemPacked = itemsArr.map((item) => {
+      if (item.id === id) {
+        return { ...item, packed: !e.target.defaultChecked };
+      }
+      return item;
+    });
+    setItemsArr(updatedItemPacked);
   }
 
   function removeItem() {
@@ -135,25 +140,18 @@ function List({ itemObj, itemsArr, setItemsArr }) {
     <li>
       <input
         type="checkbox"
-        defaultChecked={checked}
+        defaultChecked={itemObj.packed}
         onClick={(e) => {
-          handleCheck(e);
+          handleCheck(e, itemObj.id);
         }}
       />
-      <span style={checked ? { textDecoration: "line-through" } : {}}>
+      <span style={itemObj.packed ? { textDecoration: "line-through" } : {}}>
         {itemObj.itemQuantity} {itemObj.itemDescription}
       </span>
       <button onClick={removeItem}>❌</button>
     </li>
   );
 }
-
-// function Filter({ itemsArr }) {
-
-//   return (
-
-//   );
-// }
 
 function Stats() {
   return (
