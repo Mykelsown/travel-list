@@ -89,14 +89,16 @@ function PackingLists({ itemsArr, setItemsArr }) {
   return (
     <div className="list">
       <ul>
-        {sortedItems.map((item) => (
-          <List
-            itemObj={item}
-            itemsArr={itemsArr}
-            setItemsArr={setItemsArr}
-            key={item.id}
-          />
-        ))}
+        {sortedItems.map((item) =>
+          item.itemDescription !== "" ? (
+            <List
+              itemObj={item}
+              itemsArr={itemsArr}
+              setItemsArr={setItemsArr}
+              key={item.id}
+            />
+          ) : alert("Please input an item to be added to list")
+        )}
       </ul>
 
       <form className="actions" onSubmit={clearList}>
@@ -146,9 +148,7 @@ function List({ itemObj, itemsArr, setItemsArr }) {
         }}
       />
       <span style={itemObj.packed ? { textDecoration: "line-through" } : {}}>
-        {itemObj.itemDescription === ""
-          ? alert("please enter an item to add")
-          : `${itemObj.itemQuantity} ${itemObj.itemDescription}`}
+        {itemObj.itemQuantity} {itemObj.itemDescription}
       </span>
       <button onClick={removeItem}>❌</button>
     </li>
