@@ -30,18 +30,14 @@ export default function PackingLists({ itemsArr, setItemsArr }) {
   return (
     <div className="list">
       <ul>
-        {sortedItems.map((item) =>
-          item.itemDescription !== "" ? (
-            <List
-              itemObj={item}
-              itemsArr={itemsArr}
-              setItemsArr={setItemsArr}
-              key={item.id}
-            />
-          ) : (
-            ""
-          )
-        )}
+        {sortedItems.map((item) => (
+          <List
+            itemObj={item}
+            itemsArr={itemsArr}
+            setItemsArr={setItemsArr}
+            key={item.id}
+          />
+        ))}
       </ul>
 
       <form className="actions" onSubmit={clearList}>

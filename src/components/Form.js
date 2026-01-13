@@ -1,3 +1,4 @@
+import { isDisabled } from "@testing-library/user-event/dist/utils";
 import { useState } from "react";
 
 export default function Form({ itemsArr, setItemsArr }) {
@@ -33,7 +34,7 @@ export default function Form({ itemsArr, setItemsArr }) {
         value={itemDescription}
         onChange={(e) => setItemDescription(e.target.value)}
       />
-      <button>Add</button>
+      <button disabled= { itemDescription === "" ? true: false}>Add</button>
     </form>
   );
 }
