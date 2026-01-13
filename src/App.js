@@ -97,7 +97,7 @@ function PackingLists({ itemsArr, setItemsArr }) {
               setItemsArr={setItemsArr}
               key={item.id}
             />
-          ) : alert("Please input an item to be added to list")
+          ) : ""
         )}
       </ul>
 
