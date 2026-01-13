@@ -13,7 +13,7 @@ function App() {
       <Header />
       <Form itemsArr={itemsArr} setItemsArr={setItemsArr} />
       <PackingLists itemsArr={itemsArr} setItemsArr={setItemsArr} />
-      <Stats />
+      <Stats itemsArr={itemsArr} />
     </div>
   );
 }
@@ -97,7 +97,9 @@ function PackingLists({ itemsArr, setItemsArr }) {
               setItemsArr={setItemsArr}
               key={item.id}
             />
-          ) : ""
+          ) : (
+            ""
+          )
         )}
       </ul>
 
@@ -155,10 +157,20 @@ function List({ itemObj, itemsArr, setItemsArr }) {
   );
 }
 
-function Stats() {
+function Stats({ itemsArr }) {
+  let numOfPackedItems = itemsArr.slice().filter((item) => item.packed);
+  let numOfUnpackedItems = itemsArr.slice().length - numOfPackedItems.length;
+
+  const getPercentageOfUnpacked = () =>
+    (numOfUnpackedItems * 100) / itemsArr.slice().length;
+
   return (
     <footer className="stats">
-      <em>iuewbvciubceiubc</em>
+      <em>
+        You have packed {numOfPackedItems.length} items. You have{" "}
+        {itemsArr.slice().length - numOfPackedItems.length} items left({getPercentageOfUnpacked()}%)
+        unpacked
+      </em>
     </footer>
   );
 }
